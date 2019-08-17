@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { IoMdArrowBack } from "react-icons/io";
 import { useDispatch } from "react-redux";
+import { apiLogout } from "../api/index";
 
 const Overlay = styled.div`
   position: fixed;
@@ -77,7 +78,6 @@ const Drawer = ({ open, close }) => {
     window.location.replace(`${window.location.origin}/${e}`);
   };
 
-  const handleLogout = () => dispatch({ type: "LOGOUT" });
   return (
     open && (
       <>
@@ -90,7 +90,7 @@ const Drawer = ({ open, close }) => {
           <UnorderedList>
             <li onClick={e => handleLink("")}>Home</li>
             <li onClick={e => handleLink("account")}>Account</li>
-            <li onClick={e => handleLogout(e)}>Logout</li>
+            <li onClick={() => dispatch(apiLogout())}>Logout</li>
           </UnorderedList>
         </Wrapper>
         <Overlay onClick={close} />

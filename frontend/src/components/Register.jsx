@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { apiRegister } from "../api";
-// import { useDispatch } from "react-redux";
 
 const Wrapper = styled.div`
   display: flex;
@@ -131,9 +129,20 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState(false);
 
   const handleRegister = () => {
-    password.trim() === passwordConfirm.trim() &&
+    if (password.trim() === passwordConfirm.trim()) {
+      if (
+        username.trim() === "" ||
+        password.trim() === "" ||
+        firstname === "" ||
+        lastname === "" ||
+        email === ""
+      ) {
+        setError("Required field values not provided!");
+        return;
+      }
       apiRegister({
         username: username,
         password: password,
@@ -141,9 +150,26 @@ const Register = () => {
         lastname: lastname,
         email: email
       });
-    // Register user, upon successful registration
-    // redirect user to login form
-    // Throw warning to form that passwords do not match
+    }
+  };
+
+  const apiRegister = async data => {
+    try {
+      const resp = await fetch(`/register`, {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(data)
+      });
+      if (resp.statusText !== "REGISTRATION_SUCCESSFUL") {
+        setError(resp.status);
+        return;
+      }
+      window.location.replace("http://localhost:3000/login");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -174,6 +200,7 @@ const Register = () => {
           />
           <Label htmlFor="password">Password</Label>
           <Input
+            type="password"
             name="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
@@ -181,6 +208,7 @@ const Register = () => {
           />
           <Label htmlFor="passwordConfirm">Confirm Password</Label>
           <Input
+            type="password"
             name="passwordConfirm"
             value={passwordConfirm}
             onChange={e => setPasswordConfirm(e.target.value)}
@@ -196,6 +224,7 @@ const Register = () => {
         </Form>
         <Button onClick={handleRegister}>Register</Button>
       </FormWrapper>
+      {error && <P>{error}</P>}
       <P>
         Already have an account? Login{" "}
         <a href={`http://${window.location.hostname}:3000/login`}>here?</a>

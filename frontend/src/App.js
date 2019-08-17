@@ -67,11 +67,11 @@ const App = () => {
         />
         <Route
           path="/login"
-          render={() => (!isLoggedIn ? <Login /> : <Notes />)}
+          render={() => (!isLoggedIn ? <Login /> : <Redirect to="/" />)}
         />
         <Route
           path="/register"
-          render={() => (!isLoggedIn ? <Register /> : <Notes />)}
+          render={() => (!isLoggedIn ? <Register /> : <Redirect to="/" />)}
         />
         <Route component={NotFound} />
       </Switch>

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
-import { apiLogin } from "../api/index";
 
 const Wrapper = styled.div`
   display: flex;
@@ -77,7 +76,7 @@ const Label = styled.label`
   font-family: "Open Sans", sans-serif;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.6);
-  font-size: 1em;
+  font-size: 0.85em;
   padding: 0.5em 0 0.5em 0;
 `;
 
@@ -127,11 +126,40 @@ const P = styled.p`
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
   const dispatch = useDispatch();
 
-  /*const handleLogin = () => {
-    
-  };*/
+  const apiLogin = async () => {
+    try {
+      if (username.trim() === "" || password.trim() === "") {
+        setError("Username/Password cannot be blank!");
+        return;
+      }
+
+      const resp = await fetch(`/login`, {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        credentials: "same-origin",
+        body: JSON.stringify({ username: username, password: password })
+      });
+
+      if (resp.statusText === "LOGIN_SUCCESSFUL") {
+        console.log("DISPATCH");
+        // This should redirect user to homepage based on redux isLoggedIn value
+        const json = await resp.json();
+        dispatch({ type: "LOGIN", payload: json });
+        return;
+      }
+      if (resp.statusText === "USERNAME/PASSWORD_INCORRECT") {
+        setError(resp.statusText);
+        return;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Wrapper>
@@ -143,7 +171,7 @@ const Login = () => {
             name="username"
             value={username}
             onChange={e => setUsername(e.target.value)}
-            placeholder="Username/Email"
+            placeholder="Username"
           />
           <Label htmlFor="password">Password</Label>
           <Input
@@ -154,16 +182,11 @@ const Login = () => {
             placeholder="Password"
           />
         </Form>
-        <Button
-          onClick={() =>
-            dispatch(apiLogin({ username: username, password: password }))
-          }
-        >
-          Login
-        </Button>
+        <Button onClick={apiLogin}>Login</Button>
       </FormWrapper>
+      {error && <P>{error}</P>}
       <P>
-        Don't have an account? Why not register
+        Don't have an account? Why not register{" "}
         <a href={`http://${window.location.hostname}:3000/register`}>here?</a>
       </P>
     </Wrapper>

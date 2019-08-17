@@ -1,42 +1,17 @@
 // Get username and avatar file from login request, Store this in redux state
-const apiLogin = data => {
-  if (data === undefined) return false;
+const apiLogout = () => {
   return async dispatch => {
-    try {
-      const resp = await fetch(`/login`, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        credentials: "same-origin",
-        body: JSON.stringify(data)
-      });
-      console.log(resp);
-
-      if (resp.statusText === "LOGIN_SUCCESSFUL") {
-        const json = await resp.json();
-        dispatch({ type: "LOGIN", payload: json });
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-};
-
-const apiRegister = async (data = null) => {
-  if (!data) return false;
-  try {
-    const resp = await fetch(`/register`, {
-      headers: {
-        "Content-Type": "application/json"
-      },
+    const resp = fetch("/logout", {
       method: "POST",
-      body: JSON.stringify(data)
+      credentials: "same-origin"
     });
-    if (resp.statusText === "REGISTRATION_SUCCESSFUL") return true;
-  } catch (err) {
-    console.log(err);
-  }
+
+    if (resp.statusText !== "LOGOUT_SUCCESSFUL") {
+      return;
+    }
+    dispatch({ type: "LOGOUT" });
+    return;
+  };
 };
 
 const apiAccount = async () => {
@@ -141,8 +116,7 @@ const apiDeleteNote = (data = null) => {
 };
 
 export {
-  apiLogin,
-  apiRegister,
+  apiLogout,
   apiAccount,
   apiNotes,
   apiUpdateNote,
