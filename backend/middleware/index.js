@@ -5,7 +5,7 @@ import { verifyKey } from "../helpers/jwt";
 export const auth = async (req, res, next) => {
   // Confirms the 'auth' cookie is present and not null
   if (!req.cookies.auth) {
-    res.status(401).send("Unauthorised");
+    res.status(401).end();
     return;
   }
 
@@ -21,6 +21,6 @@ export const auth = async (req, res, next) => {
   } else {
     // Returns a 401 if user token is invalid or the session
     // is not found
-    res.status(401).send("Unauthorised");
+    res.status(401).end();
   }
 };

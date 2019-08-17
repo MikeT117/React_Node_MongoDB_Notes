@@ -1,0 +1,131 @@
+import React, { useState } from "react";
+import styled from "styled-components";
+import Avatar from "./Avatar";
+import {
+  IoMdSearch,
+  IoMdAdd,
+  IoMdMenu,
+} from "react-icons/io";
+import Drawer from "./Drawer";
+import { useDispatch } from "react-redux";
+
+const Wrapper = styled.div`
+  display: flex;
+  background: #fff;
+  align-items: center;
+  padding: 1.5em 1.5em;
+  background-color: ${props => props.bgColor || "#f7f7f7"};
+`;
+
+const SearchInput = styled.input`
+  height: 32px;
+  flex-grow: inherit;
+  border-radius: inherit;
+  border: none;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  font-size: 0.9em;
+  transition: box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  padding: 0.5em;
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+  outline: none;
+  max-width: 100%;
+  min-width: 0;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  margin-right: 1em;
+  box-sizing: unset;
+  padding: 0.25em 0.5em;
+  border-radius: 0.5em;
+  color: ${props =>
+    !props.dark ? "rgba(0, 0, 0, 0.6)" : "rgb(247, 247, 247)"};
+  border: 1px solid
+    ${props => (!props.dark ? "rgba(0, 0, 0, 0.12)" : "rgb(247, 247, 247)")};
+  & svg {
+    color: inherit;
+  }
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const Spacer = styled.div`
+  flex-grow: 1;
+`;
+
+const SearchButtonWrapper = styled(ButtonWrapper)`
+  align-items: center;
+  padding: ${props => props.search && "0"};
+  flex-grow: ${props => props.search && "1"};
+  min-width: 0;
+  & svg {
+    padding: ${props => props.search && "0 .5em"};
+    box-sizing: ${props => props.search && "unset"};
+    min-width: 1.5em;
+  }
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const AddButton = styled(ButtonWrapper)`
+  @media (max-width: 768px) {
+    border-radius: 50%;
+    position: fixed;
+    bottom: 1.5em;
+    right: 1.5em;
+    margin: 0;
+    padding: 0.5em 0.5em;
+    padding: 0.75em 0.75em;
+    background-color: #04cef4;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    color: rgb(247, 247, 247);
+    border: 1px solid rgba(0, 0, 0, 0);
+  }
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const Header = ({ searchCallback }) => {
+  const [searchOpen, setSearch] = useState(false);
+  const [drawerState, setDrawer] = useState(false);
+  const dispatch = useDispatch();
+
+  const newNote = () => {
+    dispatch({ type: "EDITOR_NEW" });
+  };
+
+  const handleSearchChange = e => {
+    searchCallback(e.target.value);
+  };
+  return (
+    <Wrapper>
+      <Drawer open={drawerState} close={() => setDrawer(false)} />
+
+      <ButtonWrapper onClick={() => setDrawer(true)}>
+        <IoMdMenu size="1.5em" />
+      </ButtonWrapper>
+
+      <SearchButtonWrapper search={searchOpen}>
+        <IoMdSearch onClick={() => setSearch(!searchOpen)} size="1.5em" />
+        {searchOpen && (
+          <SearchInput
+            placeholder="Search"
+            onKeyDown={e => e.key === "Escape" && setSearch(false)}
+            onChange={handleSearchChange}
+          />
+        )}
+      </SearchButtonWrapper>
+      {!searchOpen && <Spacer />}
+      <AddButton className="addButton" onClick={newNote}>
+        <IoMdAdd size="1.5em" />
+      </AddButton>
+      <Avatar />
+    </Wrapper>
+  );
+};
+
+export default Header;
