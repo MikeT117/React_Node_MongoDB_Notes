@@ -31,9 +31,6 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true
     },
-    // See if we can define a getter here to retrieve
-    // the last entry for the user from the sessions collection
-    // in the meantim just uset Date.now
     dateTimeOfLastLogin: { type: Date, default: Date.now },
     avatar: { type: String, get: a => `${root}${a}` }
   },
