@@ -16,8 +16,7 @@ const noteSchema = new mongoose.Schema(
     },
     user: {
       required: true,
-      type: String,
-      trim: true
+      type: mongoose.Schema.Types.ObjectId,
     },
     tags: [String]
   },

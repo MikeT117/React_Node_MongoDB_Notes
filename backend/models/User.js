@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongooseLeanVirtuals from "mongoose-lean-virtuals";
 
 const root = "http://localhost:3000/public/profile_images/";
 
@@ -43,6 +44,19 @@ const userSchema = new mongoose.Schema(
     }
   }
 );
+
+// Arrow functions are now allowed here due to 'this'
+// bug with arrow functions and mongoose schemas
+// https://github.com/Automattic/mongoose/issues/3695
+userSchema.virtual("fullname").get(function() {
+  return this.firstname + " " + this.lastname;
+});
+
+userSchema.virtual("avatarImg").get(function() {
+  return "http://localhost:3000/avatar" + this.avatar + ".jpg"
+})
+
+userSchema.plugin(mongooseLeanVirtuals);
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
