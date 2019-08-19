@@ -1,15 +1,15 @@
 // Get username and avatar file from login request, Store this in redux state
 const apiLogout = () => {
   return async dispatch => {
-    const resp = fetch("/logout", {
+    const resp = await fetch("/logout", {
       method: "POST",
       credentials: "same-origin"
     });
-
     if (resp.statusText !== "LOGOUT_SUCCESSFUL") {
       return;
     }
     dispatch({ type: "LOGOUT" });
+    window.location.reload();
     return;
   };
 };
@@ -78,14 +78,18 @@ const apiSaveNote = (data = null) => {
         headers: {
           "Content-Type": "application/json"
         },
-        method: "PUT",
+        method: "POST",
         credentials: "same-origin",
         body: JSON.stringify(data)
       });
       if (resp.status === 401) dispatch({ type: "REAUTH" });
-      console.log(resp.statusText);
       if (resp.statusText === "NOTE_SAVED") {
-        dispatch({ type: "SYNC_NEW", payload: data.tempId });
+        const json = await resp.json();
+        console.log(json);
+        dispatch({
+          type: "SYNC_NEW",
+          payload: { tempId: data.tempId, backendUpdate: json }
+        });
       }
     } catch (err) {
       console.log(err);

@@ -68,7 +68,8 @@ const syncReducer = (state = initialState, action) => {
     case "SYNC_NEW":
       return {
         ...state,
-        new: state.new.filter(d => d.tempId !== action.payload)
+        new: state.new.filter(d => d.tempId !== action.payload.tempId),
+        allNotes: state.allNotes.map(d => d.tempId === action.payload.tempId ? action.payload.backendUpdate : d)
       };
     case "SYNC_UPDATED":
       return {

@@ -47,7 +47,14 @@ const App = () => {
   return (
     <Router>
       <GlobalStyle />
-      {isLoggedIn && <Header searchCallback={e => setSearchTerm(e)} />}
+      <Route
+        path="/"
+        render={routeProps =>
+          isLoggedIn ? (
+            <Header searchCallback={e => setSearchTerm(e)} {...routeProps} />
+          ) : null
+        }
+      />
       {note && <Editor note={note} />}
       <Switch>
         <Route

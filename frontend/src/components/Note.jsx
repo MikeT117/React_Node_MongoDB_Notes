@@ -6,9 +6,10 @@ const Wrapper = styled.div`
   flex-direction: column;
   flex-grow: 1;
   border-radius: 0.5em;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(61, 90, 254, 0.5);
   padding: 1em;
   margin: 0.5em;
+  background: rgba(61, 90, 254, 0.05);
   @media (max-width: 12000px) {
     max-width: 20%;
   }

@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Avatar from "./Avatar";
-import {
-  IoMdSearch,
-  IoMdAdd,
-  IoMdMenu,
-} from "react-icons/io";
+import { IoMdSearch, IoMdAdd, IoMdMenu } from "react-icons/io";
 import Drawer from "./Drawer";
 import { useDispatch } from "react-redux";
 
@@ -18,6 +14,7 @@ const Wrapper = styled.div`
 `;
 
 const SearchInput = styled.input`
+  display: ${props => (props.open ? "unset" : "none")};
   height: 32px;
   flex-grow: inherit;
   border-radius: inherit;
@@ -39,10 +36,9 @@ const ButtonWrapper = styled.div`
   box-sizing: unset;
   padding: 0.25em 0.5em;
   border-radius: 0.5em;
-  color: ${props =>
-    !props.dark ? "rgba(0, 0, 0, 0.6)" : "rgb(247, 247, 247)"};
-  border: 1px solid
-    ${props => (!props.dark ? "rgba(0, 0, 0, 0.12)" : "rgb(247, 247, 247)")};
+  color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(61, 90, 254, 0.5);
+  background: rgba(61, 90, 254, 0.05);
   & svg {
     color: inherit;
   }
@@ -52,6 +48,7 @@ const ButtonWrapper = styled.div`
 `;
 
 const Spacer = styled.div`
+  display: ${props => (!props.open ? "unset" : "none")};
   flex-grow: 1;
 `;
 
@@ -79,9 +76,9 @@ const AddButton = styled(ButtonWrapper)`
     margin: 0;
     padding: 0.5em 0.5em;
     padding: 0.75em 0.75em;
-    background-color: #04cef4;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    color: rgb(247, 247, 247);
+    background-color: rgba(254, 199, 61, 1);
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+      0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(0, 0, 0, 0);
   }
   &:hover {
@@ -89,41 +86,38 @@ const AddButton = styled(ButtonWrapper)`
   }
 `;
 
-const Header = ({ searchCallback }) => {
+const Header = ({ searchCallback, ...props }) => {
   const [searchOpen, setSearch] = useState(false);
   const [drawerState, setDrawer] = useState(false);
   const dispatch = useDispatch();
+  const root = props.location.pathname === "/";
 
   const newNote = () => {
     dispatch({ type: "EDITOR_NEW" });
   };
 
-  const handleSearchChange = e => {
-    searchCallback(e.target.value);
-  };
   return (
     <Wrapper>
-      <Drawer open={drawerState} close={() => setDrawer(false)} />
-
+      <Drawer {...props} open={drawerState} close={() => setDrawer(false)} />
       <ButtonWrapper onClick={() => setDrawer(true)}>
         <IoMdMenu size="1.5em" />
       </ButtonWrapper>
-
+      {root && <>
       <SearchButtonWrapper search={searchOpen}>
         <IoMdSearch onClick={() => setSearch(!searchOpen)} size="1.5em" />
-        {searchOpen && (
-          <SearchInput
-            placeholder="Search"
-            onKeyDown={e => e.key === "Escape" && setSearch(false)}
-            onChange={handleSearchChange}
-          />
-        )}
+        <SearchInput
+          open={searchOpen}
+          placeholder="Search"
+          onKeyDown={e => e.key === "Escape" && setSearch(false)}
+          onChange={e => searchCallback(e.target.value)}
+        />
       </SearchButtonWrapper>
-      {!searchOpen && <Spacer />}
-      <AddButton className="addButton" onClick={newNote}>
+      <Spacer open={searchOpen} />
+       <AddButton className="addButton" onClick={newNote}>
         <IoMdAdd size="1.5em" />
       </AddButton>
       <Avatar />
+      </>}
     </Wrapper>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 
@@ -8,6 +8,9 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  @media (max-width: 576px) {
+    background: rgb(61, 90, 254);
+  }
 `;
 
 const FormWrapper = styled.div`
@@ -15,10 +18,11 @@ const FormWrapper = styled.div`
   flex-direction: column;
   max-width: 50%;
   width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 0.5em;
-  padding: 1em 2em;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.12);
+  padding: 1em 2em 2.5em 2em;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  background: rgb(61, 90, 254);
   @media (max-width: 12000px) {
     max-width: 500px;
   }
@@ -60,7 +64,8 @@ const Input = styled.input`
   margin-bottom: 0.5em;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 0.5em;
-  padding: 0.5em;
+  padding: 0.75em;
+  margin-top: 0.5em;
   outline: none;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   &:hover {
@@ -72,18 +77,21 @@ const Input = styled.input`
 `;
 
 const Label = styled.label`
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
   font-family: "Open Sans", sans-serif;
   font-weight: 400;
-  color: rgba(0, 0, 0, 0.6);
+  color: rgb(247, 247, 247);
   font-size: 0.85em;
   padding: 0.5em 0 0.5em 0;
+  position: relative;
 `;
 
 const Title = styled.h1`
   font-family: "Open Sans", sans-serif;
   font-weight: 700;
-  color: rgba(0, 0, 0, 0.8);
+  color: rgb(247, 247, 247);
   margin-bottom: 0.5em;
 `;
 
@@ -98,15 +106,19 @@ const Button = styled.button`
   color: rgba(0, 0, 0, 0.8);
   font-size: 1em;
   border-radius: 0.5em;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: transparent;
+  border: 0px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(254, 199, 61, 1);
   outline: none;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  transition: all ease-in;
   &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
   }
   &:active {
-    background-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -116,11 +128,23 @@ const P = styled.p`
   color: rgba(0, 0, 0, 0.8);
   font-size: 1em;
   & > a {
+    font-weight: 600;
     text-decoration: none;
+    color: inherit;
   }
   @media (max-width: 576px) {
     font-size: 0.85em;
+    color: rgb(247, 247, 247);
   }
+`;
+const CheckLabel = styled(Label)`
+  flex-direction: row;
+`;
+
+const CheckInput = styled(Input)`
+  position: relative;
+  bottom: 2px;
+  flex-grow: 0;
 `;
 
 const Login = () => {
@@ -128,6 +152,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const dispatch = useDispatch();
+  const remember = useRef(null);
 
   const apiLogin = async () => {
     try {
@@ -142,12 +167,14 @@ const Login = () => {
         },
         method: "POST",
         credentials: "same-origin",
-        body: JSON.stringify({ username: username, password: password })
+        body: JSON.stringify({
+          username: username,
+          password: password,
+          remember: remember.current.checked
+        })
       });
 
       if (resp.statusText === "LOGIN_SUCCESSFUL") {
-        console.log("DISPATCH");
-        // This should redirect user to homepage based on redux isLoggedIn value
         const json = await resp.json();
         dispatch({ type: "LOGIN", payload: json });
         return;
@@ -166,21 +193,30 @@ const Login = () => {
       <FormWrapper>
         <Title>Login</Title>
         <Form>
-          <Label htmlFor="username">Username</Label>
-          <Input
-            name="username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            placeholder="Username"
-          />
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            name="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Password"
-          />
+          <Label htmlFor="username">
+            Username
+            <Input
+              name="username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              placeholder="Username"
+            />
+          </Label>
+          <Label htmlFor="password">
+            Password
+            <Input
+              type="password"
+              name="password"
+              value={password}
+              onKeyUp={event => event.key === "Enter" && apiLogin()}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="Password"
+            />
+          </Label>
+          <CheckLabel htmlFor="rememberme">
+            Remember me:
+            <CheckInput type="checkbox" ref={remember} />
+          </CheckLabel>
         </Form>
         <Button onClick={apiLogin}>Login</Button>
       </FormWrapper>

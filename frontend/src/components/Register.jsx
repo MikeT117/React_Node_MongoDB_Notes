@@ -7,17 +7,21 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  @media (max-width: 576px) {
+    background: rgb(61, 90, 254);
+  }
 `;
 
 const FormWrapper = styled.div`
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   max-width: 50%;
   width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 0.5em;
-  padding: 1em 2em;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.12);
+  padding: 1em 2em 2.5em 2em;
+  background: rgb(61, 90, 254);
   @media (max-width: 12000px) {
     max-width: 500px;
   }
@@ -56,10 +60,10 @@ const Input = styled.input`
   font-weight: 400;
   color: rgba(0, 0, 0, 0.8);
   font-size: 0.85em;
-  margin-bottom: 0.5em;
+  margin: 0.5em 0em 0.5em 0em;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 0.5em;
-  padding: 0.5em;
+  padding: 0.75em;
   outline: none;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   &:hover {
@@ -71,18 +75,20 @@ const Input = styled.input`
 `;
 
 const Label = styled.label`
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
   font-family: "Open Sans", sans-serif;
   font-weight: 400;
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 1em;
+  color: rgb(247, 247, 247);
+  font-size: 0.85em;
   padding: 0.5em 0 0.5em 0;
 `;
 
 const Title = styled.h1`
   font-family: "Open Sans", sans-serif;
   font-weight: 700;
-  color: rgba(0, 0, 0, 0.8);
+  color: rgb(247, 247, 247);
   margin-bottom: 0.5em;
 `;
 
@@ -97,15 +103,19 @@ const Button = styled.button`
   color: rgba(0, 0, 0, 0.8);
   font-size: 1em;
   border-radius: 0.5em;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: transparent;
+  border: 0px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(254, 199, 61, 1);
   outline: none;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  transition: all ease-in;
   &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
   }
   &:active {
-    background-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -115,10 +125,13 @@ const P = styled.p`
   color: rgba(0, 0, 0, 0.8);
   font-size: 1em;
   & > a {
+    font-weight: 600;
     text-decoration: none;
+    color: inherit;
   }
   @media (max-width: 576px) {
     font-size: 0.85em;
+    color: rgb(247, 247, 247);
   }
 `;
 
@@ -177,50 +190,62 @@ const Register = () => {
       <FormWrapper>
         <Title>Register</Title>
         <Form>
-          <Label htmlFor="username">Username</Label>
-          <Input
-            name="username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            placeholder="Username"
-          />
-          <Label htmlFor="firstname">First Name</Label>
-          <Input
-            name="firstname"
-            value={firstname}
-            onChange={e => setFirstname(e.target.value)}
-            placeholder="First Name"
-          />
-          <Label htmlFor="lastname">Last Name</Label>
-          <Input
-            name="lastname"
-            value={lastname}
-            onChange={e => setLastname(e.target.value)}
-            placeholder="Last Name"
-          />
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            name="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Password"
-          />
-          <Label htmlFor="passwordConfirm">Confirm Password</Label>
-          <Input
-            type="password"
-            name="passwordConfirm"
-            value={passwordConfirm}
-            onChange={e => setPasswordConfirm(e.target.value)}
-            placeholder="Confirm Password"
-          />
-          <Label htmlFor="email">Email Address</Label>
-          <Input
-            name="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="Email Address"
-          />
+          <Label htmlFor="username">
+            Username
+            <Input
+              name="username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              placeholder="Username"
+            />
+          </Label>
+          <Label htmlFor="firstname">
+            First Name
+            <Input
+              name="firstname"
+              value={firstname}
+              onChange={e => setFirstname(e.target.value)}
+              placeholder="First Name"
+            />
+          </Label>
+          <Label htmlFor="lastname">
+            Last Name
+            <Input
+              name="lastname"
+              value={lastname}
+              onChange={e => setLastname(e.target.value)}
+              placeholder="Last Name"
+            />
+          </Label>
+          <Label htmlFor="password">
+            Password
+            <Input
+              type="password"
+              name="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="Password"
+            />
+          </Label>
+          <Label htmlFor="passwordConfirm">
+            Confirm Password
+            <Input
+              type="password"
+              name="passwordConfirm"
+              value={passwordConfirm}
+              onChange={e => setPasswordConfirm(e.target.value)}
+              placeholder="Confirm Password"
+            />
+          </Label>
+          <Label htmlFor="email">
+            Email Address
+            <Input
+              name="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="Email Address"
+            />
+          </Label>
         </Form>
         <Button onClick={handleRegister}>Register</Button>
       </FormWrapper>

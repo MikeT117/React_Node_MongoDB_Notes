@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { apiLogout } from "../api/index";
 
 const Overlay = styled.div`
+  display: ${props => (props.open ? "unset" : "none")};
   position: fixed;
   top: 0;
   left: 0;
@@ -24,7 +25,7 @@ const Wrapper = styled.div`
   background-color: #f7f7f7;
   left: ${props => (props.open ? "0px" : "-250px")};
   top: 0;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid rgba(61, 90, 254, 0.25);
   transition: all ease-in-out;
 `;
 
@@ -37,13 +38,13 @@ const UnorderedList = styled.ul`
     color: rgba(0, 0, 0, 0.6);
     padding: 1em 0 1em 1.5em;
     list-style-type: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    border-top: 1px solid rgba(61, 90, 254, 0.25);
     &:hover {
       cursor: pointer;
     }
   }
   & li:last-child {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid rgba(61, 90, 254, 0.25);
   }
 `;
 
@@ -60,10 +61,9 @@ const ButtonWrapper = styled.div`
   align-items: center;
   padding: 0.25em 0.5em;
   border-radius: 0.5em;
-  color: ${props =>
-    !props.dark ? "rgba(0, 0, 0, 0.6)" : "rgb(247, 247, 247)"};
-  border: 1px solid
-    ${props => (!props.dark ? "rgba(0, 0, 0, 0.12)" : "rgb(247, 247, 247)")};
+  color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(61, 90, 254, 0.5);
+  background: rgba(61, 90, 254, 0.05);
   & svg {
     color: inherit;
   }
@@ -72,30 +72,28 @@ const ButtonWrapper = styled.div`
   }
 `;
 
-const Drawer = ({ open, close }) => {
+const Drawer = ({ open, close, history }) => {
   const dispatch = useDispatch();
-  const handleLink = e => {
-    window.location.replace(`${window.location.origin}/${e}`);
+  const handleNav = e => {
+    history.push(e);
+    close();
   };
-
   return (
-    open && (
-      <>
-        <Wrapper open={open}>
-          <DrawerHeader>
-            <ButtonWrapper onClick={close}>
-              <IoMdArrowBack size="1.5em" />
-            </ButtonWrapper>
-          </DrawerHeader>
-          <UnorderedList>
-            <li onClick={e => handleLink("")}>Home</li>
-            <li onClick={e => handleLink("account")}>Account</li>
-            <li onClick={() => dispatch(apiLogout())}>Logout</li>
-          </UnorderedList>
-        </Wrapper>
-        <Overlay onClick={close} />
-      </>
-    )
+    <>
+      <Wrapper open={open}>
+        <DrawerHeader>
+          <ButtonWrapper onClick={close}>
+            <IoMdArrowBack size="1.5em" />
+          </ButtonWrapper>
+        </DrawerHeader>
+        <UnorderedList>
+          <li onClick={e => handleNav("/")}>Home</li>
+          <li onClick={e => handleNav("/account")}>Account</li>
+          <li onClick={() => dispatch(apiLogout())}>Logout</li>
+        </UnorderedList>
+      </Wrapper>
+      <Overlay open={open} onClick={close} />
+    </>
   );
 };
 
